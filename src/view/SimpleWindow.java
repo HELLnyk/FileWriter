@@ -1,3 +1,6 @@
+package view;
+
+import interfaces.Sizes;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -9,10 +12,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import logic.FileWriterListing;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 
-public class SimpleWindow extends Application {
+public class SimpleWindow extends Application implements Sizes {
 
 
     TextField textFieldFileForListing;
@@ -24,11 +33,11 @@ public class SimpleWindow extends Application {
         primaryStage.setTitle("Listing Creator ");
 
         FlowPane flowPane = createFlowPane();
-        primaryStage.setScene(new Scene(flowPane, 500, 200));
+        primaryStage.setScene(new Scene(flowPane, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT));
 
         Text heading = createHeading();
         HBox findFileSpace = createHBoxPane();
-        HBox functionalButtons = createfunctionalButtons();
+        HBox functionalButtons = createFunctionalButtons();
 
         response = new Label("");
 
@@ -63,24 +72,30 @@ public class SimpleWindow extends Application {
         textFieldFileForListing = new TextField();
         textFieldFileForListing.setPrefSize(270, 20);
         Button buttonFile = new Button("Find file");
-        buttonFile.setPrefSize(100 ,20);
+        buttonFile.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        buttonFile.setOnAction((ae) -> {
+            FileManager fileManager = new FileManager();
+            fileManager.showStageFileManager();
+        });
 
         hBox.getChildren().addAll(textFieldFileForListing, buttonFile);
         return hBox;
     }
 
-    private HBox createfunctionalButtons(){
+    private HBox createFunctionalButtons(){
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.BASELINE_LEFT);
         hBox.setPadding(new Insets(15, 0, 15, 0));
         hBox.setSpacing(10);
-        Button buttonOK = new Button("OK");
-        buttonOK.setPrefSize(70, 20);
-        buttonOK.setOnAction((ae)->{
-            fileWriterListing = new FileWriterListing(textFieldFileForListing.getText());
-            System.out.println(textFieldFileForListing.getText());
 
-            response.setText("File .txt was created in such directory, where file for listing is existing ");
+        Button buttonOK = new Button("OK");
+        buttonOK.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        buttonOK.setOnAction((ae)->{
+            //fileWriterListing = new FileWriterListing(textFieldFileForListing.getText());
+            response.setText("TXT file was created in the same directory, where input file exists");
+
+            //openFile(fileWriterListing.getOutFileName());
+
         });
 
         Button buttonCANCEL = new Button("Cancel");
@@ -96,5 +111,17 @@ public class SimpleWindow extends Application {
         return hBox;
     }
 
+    private void openFile(String fileName) throws NullPointerException{
+        Desktop desktop = null;
+        if(desktop.isDesktopSupported()){
+            try {
+                Desktop.getDesktop().open(new File(fileName));
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+      //Runtime.getRuntime().exec("scratch", new File(fileName));
+    }
 
 }
