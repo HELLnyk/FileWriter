@@ -1,3 +1,5 @@
+package logic;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -5,11 +7,24 @@ import java.util.Date;
 public class FileWriterListing {
 
     private int counter = 1;
-    private String someResource = "File resource";
+    private String someResource = "File resource:";
     private String fileNameForReading;
+    private String outFileName;
 
     public FileWriterListing(String fileNameForReading) {
         this.fileNameForReading = fileNameForReading;
+        outFileName = createOutListingFile();
+        try {
+            fileWork();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private String createOutListingFile(){
+        String TXTexpansion = ".txt";
+        String cangedStr = fileNameForReading.substring(0, fileNameForReading.lastIndexOf("."));
+        return cangedStr + TXTexpansion;
     }
 
     private String getDate(){
@@ -17,24 +32,18 @@ public class FileWriterListing {
         return format.format(new Date());
     }
 
-    private void fileWork(String inFileName, String outFileName) throws FileNotFoundException, IOException{
+    private void fileWork() throws IOException{
 
-        File file1 = new File(inFileName);
+        File file1 = new File(fileNameForReading);
         File file2 = new File(outFileName);
 
         try {
-            if (!file1.exists()){
-                throw new FileNotFoundException(file1.getName());
-            }
-            if (!file2.exists()){
-                file2.createNewFile();
-            }
 
             BufferedReader in = new BufferedReader(new FileReader(file1.getAbsoluteFile()));
             PrintWriter out = new PrintWriter(file2);
 
             try {
-                out.write(someResource + "  " + inFileName);
+                out.write(someResource + "  " + fileNameForReading);
                 out.write('\n');
                 out.write(getDate());
                 out.write('\n');
@@ -58,16 +67,5 @@ public class FileWriterListing {
         }catch (IOException e){
             e.printStackTrace();
         }
-
-
     }
-
-//    public static void main (String[] args) throws IOException {
-//
-//        String fileNameForReading = "D:\\KPI\\IV_kurs\\II_semestr\\Multithreading_programming_in_Java\\Lab1\\src\\Lab1\\Client.java";
-//        String fileForWriting = "D:\\KPI\\IV_kurs\\II_semestr\\Multithreading_programming_in_Java\\client.txt";
-//
-//        FileWriterListing fileWriterListing = new FileWriterListing();
-//        fileWriterListing.fileWork(fileNameForReading, fileForWriting);
-//    }
 }
