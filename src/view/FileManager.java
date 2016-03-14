@@ -31,11 +31,13 @@ public class FileManager implements Sizes {
     Stage stage;
     Label labelCurrentDirectory;
     ObservableList<String> directoriesToString;
+    SimpleWindow simpleWindow;
 
 
 
-    public FileManager(){
-         setRootDirectoryAndSeparator();
+    public FileManager(SimpleWindow simpleWindow){
+        this.simpleWindow = simpleWindow;
+        setRootDirectoryAndSeparator();
     }
 
     private void setRootDirectoryAndSeparator(){
@@ -60,7 +62,7 @@ public class FileManager implements Sizes {
         labelCurrentDirectory = initForTextDirectory();
         rootBorderPane.setTop(labelCurrentDirectory);
 
-        setOurListOfDirectories(rootDirectory);
+        setOurFirstListOfDirectories(rootDirectory);
 
         MultipleSelectionModel<String> msModel = directories.getSelectionModel();
         msModel.selectedItemProperty().addListener(
@@ -69,9 +71,7 @@ public class FileManager implements Sizes {
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                         rootDirectory += newValue;
                         labelCurrentDirectory.setText("Current directory: " + rootDirectory);
-                        directoriesToString = FXCollections.observableArrayList(findDirectories(rootDirectory));
-                        directories.getItems().clear();
-                        directories.setItems(directoriesToString);
+                        refreshItemsInListView(findDirectories(rootDirectory));
                         rootDirectory += separator;
                     }
                 }
@@ -86,7 +86,7 @@ public class FileManager implements Sizes {
         stage.show();
     }
 
-    public void setOurListOfDirectories(String folder){
+    public void setOurFirstListOfDirectories(String folder){
         directoriesToString = FXCollections.observableArrayList(findDirectories(folder));
         directories = new ListView<>(directoriesToString);
         directories.setPrefSize(400, 550);
@@ -99,12 +99,18 @@ public class FileManager implements Sizes {
 
         Button selectFile = new Button("Select");
         selectFile.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        selectFile.setOnAction((ae)->{
+            simpleWindow.textFieldFileForListing.setText(rootDirectory);
+            stage.close();
+            setRootDirectoryAndSeparator();
+        });
 
 
         Button cancelFile = new Button("Cancel");
         cancelFile.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         cancelFile.setOnAction((ae)-> {
             stage.close();
+            setRootDirectoryAndSeparator();
         });
 
         hBox.getChildren().addAll(selectFile, cancelFile);
@@ -126,5 +132,11 @@ public class FileManager implements Sizes {
             elementsInDirectory.add(file.getName());
         }
         return elementsInDirectory;
+    }
+
+    private void refreshItemsInListView(List<String> itemsForRefresh){
+        ObservableList<String> newObsList = FXCollections.observableArrayList(itemsForRefresh);
+        directories.setItems(null);
+        directories.setItems(newObsList);
     }
 }
