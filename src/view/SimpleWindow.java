@@ -74,7 +74,7 @@ public class SimpleWindow extends Application implements Sizes {
         Button buttonFile = new Button("Find file");
         buttonFile.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         buttonFile.setOnAction((ae) -> {
-            FileManager fileManager = new FileManager();
+            FileManager fileManager = new FileManager(this);
             fileManager.showStageFileManager();
         });
 
@@ -91,15 +91,14 @@ public class SimpleWindow extends Application implements Sizes {
         Button buttonOK = new Button("OK");
         buttonOK.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         buttonOK.setOnAction((ae)->{
-            //fileWriterListing = new FileWriterListing(textFieldFileForListing.getText());
+            fileWriterListing = new FileWriterListing(textFieldFileForListing.getText());
             response.setText("TXT file was created in the same directory, where input file exists");
-
             //openFile(fileWriterListing.getOutFileName());
 
         });
 
         Button buttonCANCEL = new Button("Cancel");
-        buttonCANCEL.setPrefSize(70, 20);
+        buttonCANCEL.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
 
         buttonCANCEL.setOnAction((ae)-> {
             textFieldFileForListing.setText("");
