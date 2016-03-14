@@ -32,6 +32,10 @@ public class FileWriterListing {
         return format.format(new Date());
     }
 
+    public String getOutFileName() {
+        return outFileName;
+    }
+
     private void fileWork() throws IOException{
 
         File file1 = new File(fileNameForReading);
